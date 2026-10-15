@@ -1,0 +1,45 @@
+name: Verify staged OTA 2026.10.15.1
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/verify-ota-20261015.yml']
+permissions: {}
+jobs:
+  verify-public-archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Download the public Pages archive and verify the approved candidate
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import hashlib, io, json, time, urllib.request, zipfile
+          url = 'https://psswrdtwlv.github.io/nutrio-updates/nutrio-2026.10.15.1.zip'
+          expected = '7d16d68b400969e397461f7fa7b1b78485a04037283f4d97c276e6bbc230b437'
+          for attempt in range(18):
+              try:
+                  req = urllib.request.Request(url, headers={'Cache-Control': 'no-cache'})
+                  with urllib.request.urlopen(req, timeout=30) as response:
+                      assert response.status == 200
+                      assert response.url == url, 'Unexpected redirect'
+                      archive = response.read(24 * 1024 * 1024 + 1)
+                  assert len(archive) <= 24 * 1024 * 1024
+                  assert hashlib.sha256(archive).hexdigest() == expected, 'Archive checksum mismatch'
+                  break
+              except Exception as error:
+                  print(f'Attempt {attempt + 1}: {error}', flush=True)
+                  if attempt == 17:
+                      raise
+                  time.sleep(10)
+          with zipfile.ZipFile(io.BytesIO(archive)) as z:
+              assert z.testzip() is None
+              assert 'index.html' in z.namelist()
+              foods_raw = z.read('offline-foods.json')
+              foods = json.loads(foods_raw)
+              meta = json.loads(z.read('offline-foods.meta.json'))
+              assert len(foods) == meta['products'] == 101221
+              assert len({row[0] for row in foods}) == 101221
+              assert hashlib.sha256(foods_raw).hexdigest() == meta['sha256']
+          print(json.dumps({'url': url, 'http': 200, 'bytes': len(archive), 'sha256': expected,
+                            'zipCRC': 'passed', 'products': len(foods), 'publicArchiveVerified': True}), flush=True)
+          PY
