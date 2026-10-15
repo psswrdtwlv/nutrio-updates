@@ -1,0 +1,54 @@
+{
+  "version": "2026.10.15.2",
+  "status": "release-candidate-not-published",
+  "sourceCommit": "16ec74c2054cb929f52ae176d4300c825be71d06",
+  "marketingVersion": "1.0.0 · 1 бета",
+  "nativeVersion": "1",
+  "products": 114199,
+  "added": 12978,
+  "oldRecordsPreserved": 101221,
+  "usableBarcodes": 93271,
+  "zipBytes": 16996359,
+  "sha256": "d1ceeb85711e00baeb1ca8591a204bc21b579c882847c984ae1ff989e76df913",
+  "zipCrc": "passed",
+  "htmlAssets": "passed",
+  "catalogSha256": "c178e2c5c6c7292e1eb46b00ed43da6040d5a350bf67ac380ccc7a3c13b95c2e",
+  "previous101221ByteHash": "passed",
+  "frontendTests": 845,
+  "pythonTests": 9,
+  "productionBuild": "passed",
+  "browserChecks": {
+    "pro": {
+      "screen": "Nutrio PRO",
+      "viewport": "390x844",
+      "detailCards": 4,
+      "circledFreeCard": "removed",
+      "circledFooter": "removed",
+      "javascriptErrors": []
+    },
+    "pagination": {
+      "mobileViewport": "390x844",
+      "automaticScrollCounts": [
+        20,
+        40,
+        60,
+        78
+      ],
+      "queryReset": "passed",
+      "scrollDidNotChangeDiary": true,
+      "addFood": "passed",
+      "javascriptErrors": [],
+      "nativeOtaTested": false
+    },
+    "settings": {
+      "catalogCounter": "114 199",
+      "updateButton": "visible and connected to OTA",
+      "webGuard": "passed",
+      "javascriptErrors": [],
+      "nativePhoneTested": false
+    }
+  },
+  "physicalPhoneTested": false,
+  "uiChange": "Removed circled free tier section and subscription footer",
+  "supersedesLocalCandidateSha256": "dacbd72f4617002af1b5ba936285bb34cecd1483dab074dfbe6dc78797f183ec"
+}
