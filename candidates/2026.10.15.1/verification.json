@@ -1,0 +1,29 @@
+{
+  "file": "nutrio-2026.10.15.1.zip",
+  "bytes": 16469404,
+  "sha256": "7d16d68b400969e397461f7fa7b1b78485a04037283f4d97c276e6bbc230b437",
+  "products": 101221,
+  "releaseLabel": "1.0.0 · 1 бета",
+  "nativeVersion": "1",
+  "published": false,
+  "zipCRC": "passed",
+  "entryAssets": "passed",
+  "sourceTree": "3683262878f89ff586da831e4b6949b0f3822df0",
+  "pullRequest": "https://github.com/psswrdtwlv/nutrio/pull/11",
+  "sourceLocalCommit": "3f7b7fd3d2ed0367d038dae9d94959bbca018fb6",
+  "usdaFiber291Corrected": true,
+  "sourceSyncPending": true,
+  "sources": {
+    "openfoodfacts": 99940,
+    "usda-foundation": 318,
+    "vkusvill-snapshot": 963
+  },
+  "frontendTests": 845,
+  "catalogTests": 5,
+  "build": "passed",
+  "physicalPhoneTested": false,
+  "retailerSearchVocabularyEntries": 41,
+  "productsAddedThisPass": 0,
+  "browserPaginationCheck": "passed: 20 -> 40 -> 60 -> 78",
+  "targetedRecheckTests": 29
+}

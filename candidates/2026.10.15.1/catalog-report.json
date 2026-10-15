@@ -1,0 +1,68 @@
+{
+  "products": 101221,
+  "base_products": 100000,
+  "usda_added": 318,
+  "sources": {
+    "openfoodfacts": 99940,
+    "usda-foundation": 318,
+    "vkusvill-snapshot": 963
+  },
+  "cyrillic_names": 7409,
+  "usable_barcodes": 93271,
+  "barcodes_cleared": 6669,
+  "removed": {
+    "macro_total_impossible": 60
+  },
+  "canonical_skipped": {},
+  "energy_warnings_unreviewed": 3350,
+  "limits": [
+    "Energy warnings are not individually reviewed.",
+    "Legacy OFF rows lack original mass/volume provenance; basis cannot be reverified.",
+    "Cyrillic name does not establish Russian origin or market.",
+    "VkusVill is a third-party snapshot from 2025-11-19; current stock and label freshness are not verified."
+  ],
+  "sha256": "5b496513d016c94eb3bc6000773986f5fd715038f8a50e12b435ebf095457c19",
+  "bytes": 11369364,
+  "base_sha256": "539682899ed9369c5dd9d0ff5309aa91a3ea98a15053afdeb1184122b379585f",
+  "canonical_sha256": "d086fa128f9594876cc9914741888f334ca771e91af81354c28730a77f170658",
+  "attribution": [
+    {
+      "source": "Open Food Facts",
+      "license": "ODbL 1.0",
+      "url": "https://world.openfoodfacts.org/",
+      "record_url_template": "https://world.openfoodfacts.org/product/{id}"
+    },
+    {
+      "source": "USDA FoodData Central Foundation",
+      "license": "CC0",
+      "url": "https://fdc.nal.usda.gov/"
+    },
+    {
+      "source": "VkusVill research snapshot",
+      "license": "MIT",
+      "copyright": "Copyright (c) 2025 Zakhar",
+      "repository": "https://github.com/GrandZah/Analysis-VkusVille",
+      "snapshotCommit": "31de69614468d99049e4a79769e0532a48af0784",
+      "snapshotAt": "2025-11-19T11:16:06Z",
+      "notice": "/catalog-sources/vkusvill-snapshot-LICENSE.txt",
+      "originalSource": "https://vkusvill.ru/"
+    }
+  ],
+  "retailer_import": {
+    "source": "vkusvill-snapshot",
+    "seen": 995,
+    "added": 963,
+    "rejected": {
+      "duplicate_name_brand_nutrition": 8,
+      "missing_nutrition": 23,
+      "impossible_nutrition": 1
+    },
+    "snapshotAt": "2025-11-19T11:16:06Z",
+    "commit": "31de69614468d99049e4a79769e0532a48af0784",
+    "gitBlob": "5b3edd9206ad3c03ec2b3ee3ed01abd713954000",
+    "repository": "https://github.com/GrandZah/Analysis-VkusVille",
+    "license": "MIT",
+    "liveAvailabilityVerified": false
+  },
+  "previous_candidate_sha256": "9ca686783d55a6541bd8b94545ecd15cd80ea6c486827d397124712c0c73ebab"
+}
