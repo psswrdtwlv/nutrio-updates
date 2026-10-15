@@ -1,0 +1,62 @@
+name: Collect Russian OFF source records for catalog review
+on:
+  push:
+    branches: [data/ru-off-20261015]
+    paths: ['.github/workflows/collect-ru-off.yml']
+permissions: {}
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Collect original records with source units and store tags
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/off-ru"
+          python3 - <<'PY'
+          import gzip, hashlib, json, math, os, time, urllib.parse, urllib.request
+          from pathlib import Path
+          out = Path(os.environ['RUNNER_TEMP']) / 'off-ru'
+          fields = 'code,product_name,product_name_ru,brands,nutriments,nutrition_data_per,quantity,product_quantity,product_quantity_unit,countries_tags,stores_tags,categories_tags,food_groups_tags,last_modified_t'
+          seen=set(); count=0; reported=None; pages=0
+          with gzip.open(out/'raw-products.jsonl.gz','wt',encoding='utf-8') as target:
+              for page in range(1,401):
+                  if page > 1: time.sleep(7)
+                  query=urllib.parse.urlencode({'countries_tags':'en:russia','page_size':1000,'page':page,'fields':fields})
+                  url='https://world.openfoodfacts.org/api/v2/search?'+query
+                  for attempt in range(3):
+                      try:
+                          request=urllib.request.Request(url,headers={'User-Agent':'NutrioCatalog/1.0 (https://github.com/psswrdtwlv/nutrio)','Accept':'application/json'})
+                          with urllib.request.urlopen(request,timeout=40) as response:
+                              data=json.load(response)
+                          break
+                      except Exception as error:
+                          print(f'Page {page}, attempt {attempt+1}: {error}',flush=True)
+                          if attempt==2: raise
+                          time.sleep(10)
+                  products=data.get('products')
+                  if not isinstance(products,list): raise ValueError('Missing products array')
+                  reported=data.get('count',reported); pages+=1
+                  fresh=0
+                  for product in products:
+                      code=product.get('code')
+                      if not isinstance(code,str) or code in seen:continue
+                      seen.add(code); target.write(json.dumps(product,ensure_ascii=False,allow_nan=False)+'\n'); count+=1; fresh+=1
+                  print(json.dumps({'page':page,'received':len(products),'new':fresh,'total':count,'reported':reported}),flush=True)
+                  if not products:break
+                  size=int(data.get('page_size') or len(products))
+                  if reported is not None and page*size>=int(reported):break
+                  if not fresh:raise ValueError('Pagination repeated the previous data')
+              else:raise ValueError('Pagination safety limit reached')
+          raw=(out/'raw-products.jsonl.gz').read_bytes()
+          report={'source':'Open Food Facts','license':'ODbL-1.0','countryFilter':'en:russia','records':count,'reportedCount':reported,'pages':pages,'sha256':hashlib.sha256(raw).hexdigest(),'publishedToPhones':False,'nutritionValidated':False}
+          (out/'collection-report.json').write_text(json.dumps(report,indent=2)+'\n')
+          (out/'ATTRIBUTION.txt').write_text('Contains information from Open Food Facts, https://world.openfoodfacts.org, available under the Open Database License (ODbL) 1.0. Copyright Open Food Facts contributors. Original source records for review; no phone or diary data included.\n')
+          print(json.dumps(report),flush=True)
+          PY
+      - name: Save source records for local validation
+        uses: actions/upload-artifact@v4
+        with:
+          name: off-ru-source-records
+          path: ${{ runner.temp }}/off-ru/
+          retention-days: 7
