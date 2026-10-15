@@ -40,6 +40,22 @@ jobs:
               assert len(foods) == meta['products'] == 101221
               assert len({row[0] for row in foods}) == 101221
               assert hashlib.sha256(foods_raw).hexdigest() == meta['sha256']
+          manifest_url = 'https://psswrdtwlv.github.io/nutrio-updates/manifest.json'
+          for attempt in range(18):
+              try:
+                  req = urllib.request.Request(manifest_url, headers={'Cache-Control': 'no-cache'})
+                  with urllib.request.urlopen(req, timeout=20) as response:
+                      assert response.status == 200
+                      assert response.url == manifest_url
+                      manifest = json.loads(response.read(16385))
+                  assert manifest == {'version': '2026.10.15.1', 'nativeVersion': '1', 'url': url, 'sha256': expected}, manifest
+                  break
+              except Exception as error:
+                  print(f'Manifest attempt {attempt + 1}: {error}', flush=True)
+                  if attempt == 17:
+                      raise
+                  time.sleep(10)
+          print(json.dumps({'manifestUrl': manifest_url, 'manifestVersion': manifest['version'], 'publicManifestVerified': True}), flush=True)
           print(json.dumps({'url': url, 'http': 200, 'bytes': len(archive), 'sha256': expected,
                             'zipCRC': 'passed', 'products': len(foods), 'publicArchiveVerified': True}), flush=True)
           PY
