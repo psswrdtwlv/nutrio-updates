@@ -1,0 +1,58 @@
+name: Verify staged OTA 2026.10.16.3
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/verify-ota-20261016-3.yml']
+permissions: {}
+jobs:
+  verify-public-archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Download the public Pages archive and verify the approved candidate
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import hashlib, io, json, time, urllib.request, zipfile
+          url = 'https://psswrdtwlv.github.io/nutrio-updates/nutrio-2026.10.16.3.zip'
+          expected = '4d6b0325f839db3715dac506e57dd39c8386c31025f1cea3c6163a72a0fa249d'
+          for attempt in range(18):
+              try:
+                  req = urllib.request.Request(url, headers={'Cache-Control': 'no-cache'})
+                  with urllib.request.urlopen(req, timeout=30) as response:
+                      assert response.status == 200
+                      assert response.url == url, 'Unexpected redirect'
+                      archive = response.read(24 * 1024 * 1024 + 1)
+                  assert len(archive) <= 24 * 1024 * 1024
+                  assert hashlib.sha256(archive).hexdigest() == expected, 'Archive checksum mismatch'
+                  break
+              except Exception as error:
+                  print(f'Attempt {attempt + 1}: {error}', flush=True)
+                  if attempt == 17:
+                      raise
+                  time.sleep(10)
+          with zipfile.ZipFile(io.BytesIO(archive)) as z:
+              assert z.testzip() is None
+              assert 'index.html' in z.namelist()
+              foods_raw = z.read('offline-foods.json')
+              foods = json.loads(foods_raw)
+              meta = json.loads(z.read('offline-foods.meta.json'))
+              assert len(foods) == meta['products'] == 120682
+              assert len({row[0] for row in foods}) == 120682
+              assert hashlib.sha256(foods_raw).hexdigest() == meta['sha256']
+              assert hashlib.sha256(json.dumps(foods[:114199], ensure_ascii=False, separators=(',', ':')).encode()).hexdigest() == 'c178e2c5c6c7292e1eb46b00ed43da6040d5a350bf67ac380ccc7a3c13b95c2e'
+              new = foods[114199:]
+              assert len(new) == 6483
+              assert all(row[8]['source'] == 'calorizator-snapshot' and row[8]['nutritionBasis'] == {'amount': 100, 'unit': 'g'} for row in new)
+              assert all('mcdonald' not in row[8]['sourceCategory'].casefold() for row in new)
+              assert hashlib.sha256(json.dumps(foods[:101221], ensure_ascii=False, separators=(',', ':')).encode()).hexdigest() == '5b496513d016c94eb3bc6000773986f5fd715038f8a50e12b435ebf095457c19'
+              scripts = ''.join(z.read(n).decode() for n in z.namelist() if n.endswith('.js'))
+              assert 'А что останется бесплатным?' not in scripts
+              assert 'Оплата сейчас не принимается.' not in scripts
+              css = ''.join(z.read(n).decode() for n in z.namelist() if n.endswith('.css'))
+              assert '.foodgrid{' in css and '.foodtile{' in css
+              assert '.searchfoot{position:static;' in css
+              assert 'grid-template-areas:"name kcal"' in css
+          print(json.dumps({'url': url, 'http': 200, 'bytes': len(archive), 'sha256': expected,
+                            'zipCRC': 'passed', 'products': len(foods), 'publicArchiveVerified': True}), flush=True)
+          PY

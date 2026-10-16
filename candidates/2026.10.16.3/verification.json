@@ -1,0 +1,72 @@
+{
+  "version": "2026.10.16.3",
+  "sourceCommit": "56f87012523d397c3ec9be0d1397877e06473b90",
+  "status": "candidate",
+  "products": 120682,
+  "added": 6483,
+  "previous114199Preserved": true,
+  "catalogSha256": "ca2ae74621a03d8cbdfd22b3c0358e0c2ed4e8daf64020650b712c1e7f4839f6",
+  "sha256": "4d6b0325f839db3715dac506e57dd39c8386c31025f1cea3c6163a72a0fa249d",
+  "bytes": 17342166,
+  "marketingVersion": "1.0.0 · 1 бета",
+  "nativeVersion": "1",
+  "frontendTests": 845,
+  "pythonTests": 13,
+  "build": "passed",
+  "zipCrc": "passed",
+  "htmlAssets": "passed",
+  "browser": {
+    "pagination": {
+      "mobileViewport": "390x844",
+      "automaticScrollCounts": [
+        20,
+        40,
+        60,
+        80,
+        86
+      ],
+      "queryReset": "passed",
+      "scrollDidNotChangeDiary": true,
+      "addFood": "passed",
+      "javascriptErrors": [],
+      "nativeOtaTested": false
+    },
+    "settings": {
+      "catalogCounter": "120 682",
+      "updateButton": "visible and connected to OTA",
+      "webGuard": "passed",
+      "javascriptErrors": [],
+      "nativePhoneTested": false
+    },
+    "recommendations": {
+      "recommendations": [
+        {
+          "width": 320,
+          "cards": 7,
+          "layout": "passed"
+        },
+        {
+          "width": 390,
+          "cards": 7,
+          "layout": "passed"
+        },
+        {
+          "width": 768,
+          "cards": 7,
+          "layout": "passed"
+        }
+      ],
+      "shortViewport": "390x430 focused input",
+      "darkTheme": "passed",
+      "addFood": "passed",
+      "javascriptErrors": [],
+      "physicalKeyboardTested": false
+    }
+  },
+  "sourceFreshnessCheck": {
+    "currentPageRows": 80,
+    "same": 79,
+    "missingFromSnapshot": 1
+  },
+  "physicalPhoneTested": false
+}
