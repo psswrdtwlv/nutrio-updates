@@ -2,7 +2,7 @@ name: Verify OTA 2026.10.16.7
 on:
   push:
     branches: [main]
-    paths: ['manifest.json', '.github/workflows/verify-ota-20261016-7.yml']
+    paths: ['.github/workflows/verify-ota-20261016-7.yml']
 permissions: {}
 jobs:
   verify-public:
