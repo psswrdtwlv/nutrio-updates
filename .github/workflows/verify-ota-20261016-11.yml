@@ -1,0 +1,62 @@
+name: Verify OTA 2026.10.16.11
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/verify-ota-20261016-11.yml']
+permissions: {}
+jobs:
+  verify-public:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Verify published archive and catalog
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import hashlib,io,json,time,urllib.request,zipfile,subprocess
+          VERSION='2026.10.16.11'
+          SHA='8361ea34185f2bc77f0e82f71f0177d993f59fc7ecc0ce24e06e0f4d8f8ecf9e'
+          URL=f'https://psswrdtwlv.github.io/nutrio-updates/nutrio-{VERSION}.zip'
+          EXPECT_ACTIVE=False
+          def download(url,limit):
+           for attempt in range(18):
+            try:
+             with urllib.request.urlopen(urllib.request.Request(url,headers={'Cache-Control':'no-cache'}),timeout=25) as r:
+              assert r.status==200 and r.url==url
+              b=r.read(limit+1);assert len(b)<=limit
+             return b
+            except Exception as e:
+             print('Attempt',attempt+1,str(e),flush=True)
+             if attempt==17:raise
+             time.sleep(10)
+          archive=download(URL,24*1024*1024);assert hashlib.sha256(archive).hexdigest()==SHA
+          with zipfile.ZipFile(io.BytesIO(archive)) as z:
+           assert z.testzip() is None and 'index.html' in z.namelist() and 'offline-foods.json' not in z.namelist()
+           meta=json.loads(z.read('offline-foods.meta.json'));s=meta['storage'];packed=z.read(s['file'][1:])
+           assert hashlib.sha256(packed).hexdigest()==s['sha256'] and len(packed)==s['bytes']
+           raw=subprocess.check_output(['node','-e',"const z=require('zlib');let a=[];process.stdin.on('data',x=>a.push(x));process.stdin.on('end',()=>process.stdout.write(z.brotliDecompressSync(Buffer.concat(a))));"],input=packed)
+           assert len(raw)==s['decodedBytes'] and hashlib.sha256(raw).hexdigest()==s['decodedSha256']==meta['sha256']=='a3eaf9e8e30c760738d83958a686777d42ed3a6e0192c33415e90c57a09fc62e'
+           foods=json.loads(raw);assert len(foods)==len({r[0] for r in foods})==meta['products']==126374
+           new=[r for r in foods if len(r)==9 and r[8]['source']=='pyaterochka-snapshot'];assert len(new)==5479 and all(r[3] is None for r in new)
+           assert all(r[8]['sourcePlu']!=3415786 for r in new)
+           codes=[r[3].zfill(14) for r in foods if r[3]];assert len(codes)==len(set(codes))==93473
+           scripts=''.join(z.read(n).decode() for n in z.namelist() if n.endswith('.js'))
+           assert 'M9.89 4.28 L10.28 2.15' in scripts,'Gear icon missing'
+           assert 'А что останется бесплатным?' not in scripts
+           assert 'Оплата сейчас не принимается.' not in scripts
+           assert 'resultrow__name t-truncate' not in scripts
+           css=''.join(z.read(n).decode() for n in z.namelist() if n.endswith('.css'))
+           assert 'overflow-wrap:anywhere' in css
+           assert 'catalog-notice' in scripts and 'VkusVill research snapshot' in scripts
+           assert 'Permission is hereby granted' in scripts
+           assert 'catalogcredits' in scripts and 'О данных и лицензиях' in scripts
+           assert any(n.endswith('.wasm') for n in z.namelist()) and any('/decompress-' in n for n in z.namelist())
+          if EXPECT_ACTIVE:
+           expected={'version':VERSION,'nativeVersion':'1','url':URL,'sha256':SHA}
+           for attempt in range(18):
+            manifest=json.loads(download('https://psswrdtwlv.github.io/nutrio-updates/manifest.json',16384))
+            if manifest==expected:break
+            assert attempt<17,manifest
+            time.sleep(10)
+          print(json.dumps({'version':VERSION,'sha256':SHA,'bytes':len(archive),'products':126374,'compressedCatalog':True,'gearIcon':True,'publicArchiveVerified':True,'publicManifestVerified':EXPECT_ACTIVE}),flush=True)
+          PY
