@@ -1,0 +1,57 @@
+{
+  "version": "2026.10.16.2",
+  "sourceCommit": "e043a485250165d99b39ebd9007c647d4fda83ef",
+  "products": 114199,
+  "catalogUnchanged": true,
+  "catalogSha256": "c178e2c5c6c7292e1eb46b00ed43da6040d5a350bf67ac380ccc7a3c13b95c2e",
+  "sha256": "b2d50ef63688d99c63a6f828e3f82cf0668a59384432477a617e583213f7e391",
+  "bytes": 16996580,
+  "marketingVersion": "1.0.0 · 1 бета",
+  "nativeVersion": "1",
+  "frontendTests": 845,
+  "pythonTests": 9,
+  "build": "passed",
+  "browser": {
+    "recommendations": [
+      {
+        "width": 320,
+        "cards": 7,
+        "layout": "passed"
+      },
+      {
+        "width": 390,
+        "cards": 7,
+        "layout": "passed"
+      },
+      {
+        "width": 768,
+        "cards": 7,
+        "layout": "passed"
+      }
+    ],
+    "shortViewport": "390x430 focused input",
+    "darkTheme": "passed",
+    "addFood": "passed",
+    "javascriptErrors": [],
+    "physicalKeyboardTested": false
+  },
+  "pagination": {
+    "mobileViewport": "390x844",
+    "automaticScrollCounts": [
+      20,
+      40,
+      60,
+      78
+    ],
+    "queryReset": "passed",
+    "scrollDidNotChangeDiary": true,
+    "addFood": "passed",
+    "javascriptErrors": [],
+    "nativeOtaTested": false
+  },
+  "zipCrc": "passed",
+  "status": "candidate",
+  "physicalPhoneTested": false,
+  "focusedInputCardHitTest": "passed",
+  "footerPosition": "normal flow; cannot overlay cards"
+}
