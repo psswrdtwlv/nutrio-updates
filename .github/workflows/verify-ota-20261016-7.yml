@@ -17,7 +17,7 @@ jobs:
           VERSION='2026.10.16.7'
           SHA='a44a5eb2ba1fcfedccd4a1f8fb1d463f386bb52321981b3e8e48b2f20c66ae15'
           URL=f'https://psswrdtwlv.github.io/nutrio-updates/nutrio-{VERSION}.zip'
-          EXPECT_ACTIVE=False
+          EXPECT_ACTIVE=True
           def download(url,limit):
            for attempt in range(18):
             try:
