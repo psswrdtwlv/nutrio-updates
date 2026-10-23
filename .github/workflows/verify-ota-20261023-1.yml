@@ -1,0 +1,22 @@
+name: Verify OTA 2026.10.23.1
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/verify-ota-20261023-1.yml'
+      - '.github/scripts/verify-ota-20261023-1.py'
+permissions:
+  contents: read
+jobs:
+  verify-public:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify staged archive and complete million-product catalog
+        env:
+          NUTRIO_VERIFY_SHA: 8dc566c92d891261e67fef935e37379277f6ffdee483ca629fa558642f3401f0
+          NUTRIO_VERIFY_ACTIVE: 'false'
+        run: python3 .github/scripts/verify-ota-20261023-1.py
