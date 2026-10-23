@@ -18,5 +18,5 @@ jobs:
       - name: Verify active manifest, archive and complete catalog
         env:
           NUTRIO_VERIFY_SHA: fef21bab960c58c4b6566e0ea3d95adc30125722c58fc2378aaab8799eaa6478
-          NUTRIO_VERIFY_ACTIVE: 'false'
+          NUTRIO_VERIFY_ACTIVE: 'true'
         run: python3 .github/scripts/verify-ota-20261023-3.py
